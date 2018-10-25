@@ -64,3 +64,7 @@
 	overflow: auto;
 	z-index: 0;
 }
+
+#map {
+	height: 100%;
+}

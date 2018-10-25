@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Mapa from "./Mapa.js"
 
 class App extends Component {
 	render() {
@@ -19,9 +20,7 @@ class App extends Component {
 					</div>
 				</aside>
 				<header className="mapa">
-					<p>
-						Edit <code>src/App.js</code> and save to reload.
-					</p>
+					<Mapa />
 				</header>
 			</div>
 			);
