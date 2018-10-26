@@ -14,14 +14,17 @@ const MyMapComponent = withScriptjs(withGoogleMap((props) =>
 class Mapa extends Component {
     
     render() {
+        const { isLateralToggled } = this.props
         return (
-            <MyMapComponent
-                isMarkerShown
-                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDk9y-BWlt1u5klFVBGxWocj2DnHV_e9k&libraries=geometry,drawing,places"
-                loadingElement={<div style={{ height: `100%` }} />}
-                containerElement={<div style={{ height: `100%` }} />}
-                mapElement={<div style={{ height: `100%` }} />}
-            />
+            <main className={isLateralToggled ? "mapa-toggle" : "mapa"}>
+                <MyMapComponent
+                    isMarkerShown
+                    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDk9y-BWlt1u5klFVBGxWocj2DnHV_e9k&libraries=geometry,drawing,places"
+                    loadingElement={<div style={{ height: `100%` }} />}
+                    containerElement={<div style={{ height: `100%` }} />}
+                    mapElement={<div style={{ height: `100%` }} />}
+                />
+            </main>
         );
     }
 }

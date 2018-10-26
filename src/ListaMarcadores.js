@@ -5,9 +5,10 @@ import escapeRegExp from 'escape-string-regexp'
 import sortBy from 'sort-by'
 
 class ListaMarcadores extends Component {
+
   static propTypes = {
     marcadores: PropTypes.array.isRequired,
-    onDeleteMarcador: PropTypes.func.isRequired
+    showMarcadorMapa: PropTypes.func.isRequired
   }
 
   state = {
@@ -23,7 +24,7 @@ class ListaMarcadores extends Component {
   }
 
   render() {
-    const { marcadores, onDeleteMarcador } = this.props
+    const { marcadores, showMarcadorMapa, isLateralToggled } = this.props
     const { query } = this.state
 
     let showingMarcadores
@@ -34,48 +35,28 @@ class ListaMarcadores extends Component {
       showingMarcadores = marcadores
     }
 
-    showingMarcadores.sort(sortBy('name'))
+    showingMarcadores.sort(sortBy('titulo'))
 
     return (
-      <div className='list-contacts'>
-        <div className='list-contacts-top'>
-          <input
-            className='search-contacts'
-            type='text'
-            placeholder='Search contacts'
-            value={query}
-            onChange={(event) => this.updateQuery(event.target.value)}
-          />
-          <Link
-            to='/create'
-            className='add-contact'
-          >Add Contact</Link>
-        </div>
+      <aside className={isLateralToggled ? "sidebar-toggle" : "sidebar"}>
+        <input
+	        type="text"
+	        className="entrada-filtro"
+	        placeholder="Filtre aqui... 🔎"
+	        value={query}
+	        onChange={(event) => this.updateQuery(event.target.value)}
+        />
 
-        {showingMarcadores.length !== marcadores.length && (
-          <div className='showing-contacts'>
-            <span>Now showing {showingMarcadores.length} of {marcadores.length} total</span>
-            <button onClick={this.clearQuery}>Show all</button>
-          </div>
-        )}
-
-        <ol className='contact-list'>
-          {showingMarcadores.map((contact) => (
-            <li key={marcador.id} className='contact-list-item'>
-              <div className='contact-avatar' style={{
-                backgroundImage: `url(${marcador.avatarURL})`
-              }}/>
-              <div className='scontact-details'>
-                <p>{marcador.name}</p>
-                <p>{marcador.email}</p>
-              </div>
-              <button onClick={() => onDeleteMarcador(marcador)} className='contact-remove'>
-                Remove
-              </button>
-            </li>
-          ))}
-        </ol>
-      </div>
+		{showingMarcadores.map((marcador) => (
+			<div
+				key={marcador.id}
+				className="sidebar-inner"
+				onClick={() => showMarcadorMapa(marcador)}
+			>
+				<p>{marcador.titulo}</p>
+			</div>
+		))}
+      </aside>
     )
   }
 }

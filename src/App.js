@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import './App.css';
 import Mapa from "./Mapa.js"
 import * as MarcadoresAPI from './utils/MarcadoresAPI'
+import ListaMarcadores from "./ListaMarcadores.js"
 
 class App extends Component {
 	state = {
-		marcadores: []
+		marcadores: [],
+		isLateralToggled: false
 	}
 	componentDidMount() {
 		MarcadoresAPI.getAll().then((marcadores) => {
@@ -29,6 +31,14 @@ class App extends Component {
 		})
 	}
 
+	showMarcadorMapa(marcadir) {
+
+	}
+
+	toggleLateral() {
+		this.setState({ isLateralToggled: !this.state.isLateralToggled })
+	}
+
 	render() {
 		return (
 			<div className="app">
@@ -37,27 +47,23 @@ class App extends Component {
 						<a href="/">Mapa do Umarizal</a>
 					</span>
 					<span className="hamburger">
-						<a href="#" title="Mostrar/Esconder Barra lateral">☰</a>
+						<a
+							href="#"
+							title="Mostrar/Esconder Barra lateral"
+							onClick={() => this.toggleLateral()}
+						>
+							☰
+						</a>
 					</span>
 				</nav>
-				<aside className="sidebar">
-					<input type="text" className="entrada-filtro" placeholder="Filtre aqui... 🔎" />
-					<div className="sidebar-inner">
-						Teste
-					</div>
-					<div className="sidebar-inner">
-						Teste
-					</div>
-					<div className="sidebar-inner">
-						Teste
-					</div>
-					<div className="sidebar-inner">
-						Teste
-					</div>
-				</aside>
-				<main className="mapa">
-					<Mapa />
-				</main>
+				<ListaMarcadores
+					isLateralToggled={this.state.isLateralToggled}
+					showMarcadorMapa={this.showMarcadorMapa}
+					marcadores={this.state.marcadores}
+				/>
+				<Mapa
+					isLateralToggled={this.state.isLateralToggled}
+				/>
 			</div>
 			)
 	}
