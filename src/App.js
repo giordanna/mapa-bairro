@@ -3,6 +3,8 @@ import "./App.css";
 import Mapa from "./Mapa.js"
 import * as MarcadoresAPI from "./utils/MarcadoresAPI"
 import ListaMarcadores from "./ListaMarcadores.js"
+import escapeRegExp from "escape-string-regexp"
+import sortBy from "sort-by"
 
 class App extends Component {
 	state = {
@@ -12,12 +14,18 @@ class App extends Component {
 			{ "titulo" : "abc3", "lat": -1.4423, "lng" : -48.4820 },
 			{ "titulo" : "abc4", "lat": -1.4483, "lng" : -48.4830 },
 		],
-		isLateralToggled: false
+		isLateralToggled: false,
+		query: ""
 	}
+
 	componentDidMount() {
 		MarcadoresAPI.getAll().then((marcadores) => {
 			this.setState({ marcadores })
 		})
+	}
+
+	updateQuery = (query) => {
+		this.setState({ query: query.trim() })
 	}
 
 	removeMarcador = (marcador) => {
@@ -41,6 +49,16 @@ class App extends Component {
 	}
 
 	render() {
+		let showingMarcadores
+	    if (this.state.query) {
+	      const match = new RegExp(escapeRegExp(this.state.query), "i")
+	      showingMarcadores = this.state.marcadores.filter((marcador) => match.test(marcador.titulo))
+	    } else {
+	      showingMarcadores = this.state.marcadores
+	    }
+
+	    showingMarcadores.sort(sortBy("titulo"))
+
 		return (
 			<div className="app">
 				<nav className="nav">
@@ -57,13 +75,15 @@ class App extends Component {
 					</span>
 				</nav>
 				<ListaMarcadores
+					query={this.state.query}
+					updateQuery={this.updateQuery}
 					isLateralToggled={this.state.isLateralToggled}
 					showMarcadorMapa={this.showMarcadorMapa}
-					marcadores={this.state.marcadores}
+					marcadores={showingMarcadores}
 				/>
 				<Mapa
 					isLateralToggled={this.state.isLateralToggled}
-					marcadores={this.state.marcadores}
+					marcadores={showingMarcadores}
 				/>
 			</div>
 			)
