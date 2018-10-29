@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import escapeRegExp from 'escape-string-regexp'
-import sortBy from 'sort-by'
+import React, { Component } from "react";
+import { Link } from "react-router-dom"
+import PropTypes from "prop-types"
+import escapeRegExp from "escape-string-regexp"
+import sortBy from "sort-by"
 
 class ListaMarcadores extends Component {
 
@@ -12,7 +12,7 @@ class ListaMarcadores extends Component {
   }
 
   state = {
-    query: ''
+    query: ""
   }
 
   updateQuery = (query) => {
@@ -20,7 +20,7 @@ class ListaMarcadores extends Component {
   }
 
   clearQuery = () => {
-    this.setState({ query: '' })
+    this.setState({ query: "" })
   }
 
   render() {
@@ -29,13 +29,13 @@ class ListaMarcadores extends Component {
 
     let showingMarcadores
     if (query) {
-      const match = new RegExp(escapeRegExp(query), 'i')
-      showingMarcadores = marcadores.filter((marcador) => match.test(marcador.name))
+      const match = new RegExp(escapeRegExp(query), "i")
+      showingMarcadores = marcadores.filter((marcador) => match.test(marcador.titulo))
     } else {
       showingMarcadores = marcadores
     }
 
-    showingMarcadores.sort(sortBy('titulo'))
+    showingMarcadores.sort(sortBy("titulo"))
 
     return (
       <aside className={isLateralToggled ? "sidebar-toggle" : "sidebar"}>
@@ -47,9 +47,9 @@ class ListaMarcadores extends Component {
 	        onChange={(event) => this.updateQuery(event.target.value)}
         />
 
-		{showingMarcadores.map((marcador) => (
+		{showingMarcadores.map((marcador, i) => (
 			<div
-				key={marcador.id}
+				key={ i }
 				className="sidebar-inner"
 				onClick={() => showMarcadorMapa(marcador)}
 			>

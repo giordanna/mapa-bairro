@@ -1,12 +1,17 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
 import Mapa from "./Mapa.js"
-import * as MarcadoresAPI from './utils/MarcadoresAPI'
+import * as MarcadoresAPI from "./utils/MarcadoresAPI"
 import ListaMarcadores from "./ListaMarcadores.js"
 
 class App extends Component {
 	state = {
-		marcadores: [],
+		marcadores: [
+			{ "titulo" : "abc1", "lat": -1.4513, "lng" : -48.4800 },
+			{ "titulo" : "abc2", "lat": -1.4463, "lng" : -48.4810 },
+			{ "titulo" : "abc3", "lat": -1.4423, "lng" : -48.4820 },
+			{ "titulo" : "abc4", "lat": -1.4483, "lng" : -48.4830 },
+		],
 		isLateralToggled: false
 	}
 	componentDidMount() {
@@ -26,13 +31,9 @@ class App extends Component {
 	createMarcador(marcador) {
 		MarcadoresAPI.create(marcador).then(marcador => {
 			this.setState(state => ({
-				contacts: state.marcadores.concat([ marcador ])
+				marcadores: state.marcadores.concat([ marcador ])
 			}))
 		})
-	}
-
-	showMarcadorMapa(marcadir) {
-
 	}
 
 	toggleLateral() {
@@ -48,7 +49,6 @@ class App extends Component {
 					</span>
 					<span className="hamburger">
 						<a
-							href="#"
 							title="Mostrar/Esconder Barra lateral"
 							onClick={() => this.toggleLateral()}
 						>
@@ -63,6 +63,7 @@ class App extends Component {
 				/>
 				<Mapa
 					isLateralToggled={this.state.isLateralToggled}
+					marcadores={this.state.marcadores}
 				/>
 			</div>
 			)

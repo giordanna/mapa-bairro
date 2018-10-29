@@ -44,6 +44,7 @@
 
 .nav a:hover {
 	background: #111;
+	cursor: pointer;
 }
 
 .botao {
@@ -69,13 +70,16 @@
 }
 
 .sidebar-inner {
-	margin: 0 10px;
-	padding: 5px 0;
-	border-bottom: 1px solid grey;
+	margin: -20px 0;
 }
 
-.sidebar-inner:last-child {
-	border-bottom: none;
+.sidebar-inner .selecionado {
+	background: #282c34;
+}
+
+.sidebar-inner:hover {
+	background: #282c34;
+	cursor: pointer;
 }
 
 .sidebar-toggle {
@@ -105,6 +109,10 @@
 	color: white;
 	overflow: auto;
 	z-index: 0;
+}
+
+.info {
+	color: black;
 }
 
 #map {
@@ -144,7 +152,7 @@
 		margin-top: 52px;
 		color: grey;
 		background: black;
-	z-index: 1;
+		z-index: 1;
 		width: 45%;
 	}
 
