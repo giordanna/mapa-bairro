@@ -1,15 +1,9 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types"
 
 class ListaMarcadores extends Component {
 
-  static propTypes = {
-    marcadores: PropTypes.array.isRequired,
-    showMarcadorMapa: PropTypes.func.isRequired
-  }
-
   render() {
-    const { marcadores, showMarcadorMapa, isLateralToggled, updateQuery, query } = this.props
+    const { marcadores, selecionarMarcador, isLateralToggled, updateQuery, query } = this.props
 
     return (
       <aside className={isLateralToggled ? "sidebar-toggle" : "sidebar"}>
@@ -25,9 +19,9 @@ class ListaMarcadores extends Component {
 			<div
 				key={ i }
 				className="sidebar-inner"
-				onClick={() => showMarcadorMapa(marcador)}
+				onClick={() => selecionarMarcador(marcador)}
 			>
-				<p>{marcador.titulo}</p>
+				<p>{marcador.nome}</p>
 			</div>
 		))}
       </aside>

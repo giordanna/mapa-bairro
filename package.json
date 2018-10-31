@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "escape-string-regexp": "^1.0.5",
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-foursquare": "^1.0.3",
     "react-google-maps": "^9.4.5",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.0.5",
     "recompose": "^0.30.0",
-    "sort-by": "^1.2.0"
+    "request": "^2.88.0",
+    "sort-by": "^1.2.0",
+    "yelp-fusion": "^2.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

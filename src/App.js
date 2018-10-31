@@ -4,17 +4,49 @@ import Mapa from "./Mapa.js"
 import * as MarcadoresAPI from "./utils/MarcadoresAPI"
 import ListaMarcadores from "./ListaMarcadores.js"
 import escapeRegExp from "escape-string-regexp"
-import sortBy from "sort-by"
 
 class App extends Component {
 	state = {
 		marcadores: [
-			{ "titulo" : "abc1", "lat": -1.4513, "lng" : -48.4800 },
-			{ "titulo" : "abc2", "lat": -1.4463, "lng" : -48.4810 },
-			{ "titulo" : "abc3", "lat": -1.4423, "lng" : -48.4820 },
-			{ "titulo" : "abc4", "lat": -1.4483, "lng" : -48.4830 },
+			  {
+			    "nome": "Porpino Burger",
+			    "endereco": "Jerônimo Pimentel, 242",
+			    "lat": -1.442430694656103,
+			    "lng": -48.488064103178374
+			  },
+			  {
+			    "nome": "Roxy Bar",
+			    "endereco": "Av. Senador Lemos, 231",
+			    "lat": -1.4412027502407205,
+			    "lng": -48.489757776260376
+			  },
+			  {
+			    "nome": "Cia. Paulista de Pizza",
+			    "endereco": "Av. Visc. de Souza Franco, 559",
+			    "lat": -1.443236819183104,
+			    "lng": -48.48991106226811
+			  },
+			  {
+			    "nome": "D'Opará",
+			    "endereco": "Av. Sen. Lemos",
+			    "lat": -1.4421665904806702,
+			    "lng": -48.48984166720438
+			  },
+			  {
+			    "nome": "Armazém Belém",
+			    "endereco": "Boulevard Shopping (Piso 1, Lj. 163)",
+			    "lat": -1.4456159017835408,
+			    "lng": -48.489071420094675
+			  },
+			  {
+			    "nome": "Cairu",
+			    "endereco": "Boulevard Shopping (Piso 4, Lj. 412)",
+			    "lat": -1.445670539090734,
+			    "lng": -48.48890663650532
+			  }
 		],
 		isLateralToggled: false,
+		marcadorSelecionado: null,
 		query: ""
 	}
 
@@ -48,22 +80,34 @@ class App extends Component {
 		this.setState({ isLateralToggled: !this.state.isLateralToggled })
 	}
 
+	mostrarAbout() {
+		alert("Feito com React, Google Maps e Yelp")
+	}
+
+	selecionarMarcador = (marcador) => {
+		this.setState({ marcadorSelecionado: marcador })
+		alert(marcador["nome"])
+	}
+
 	render() {
 		let showingMarcadores
 	    if (this.state.query) {
 	      const match = new RegExp(escapeRegExp(this.state.query), "i")
-	      showingMarcadores = this.state.marcadores.filter((marcador) => match.test(marcador.titulo))
+	      showingMarcadores = this.state.marcadores.filter((marcador) => match.test(marcador.nome))
 	    } else {
 	      showingMarcadores = this.state.marcadores
 	    }
-
-	    showingMarcadores.sort(sortBy("titulo"))
 
 		return (
 			<div className="app">
 				<nav className="nav">
 					<span className="botao">
 						<a href="/">Mapa do Umarizal</a>
+					</span>
+					<span className="botao">
+						<a
+							onClick={() => this.mostrarAbout()}
+						>Sobre</a>
 					</span>
 					<span className="hamburger">
 						<a
@@ -78,12 +122,15 @@ class App extends Component {
 					query={this.state.query}
 					updateQuery={this.updateQuery}
 					isLateralToggled={this.state.isLateralToggled}
-					showMarcadorMapa={this.showMarcadorMapa}
 					marcadores={showingMarcadores}
+					selecionarMarcador={this.selecionarMarcador}
+					marcadorSelecionado={this.state.marcadorSelecionado}
 				/>
 				<Mapa
 					isLateralToggled={this.state.isLateralToggled}
 					marcadores={showingMarcadores}
+					selecionarMarcador={this.selecionarMarcador}
+					marcadorSelecionado={this.state.marcadorSelecionado}
 				/>
 			</div>
 			)
