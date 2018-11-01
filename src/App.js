@@ -4,50 +4,16 @@ import Mapa from "./Mapa.js"
 import * as MarcadoresAPI from "./utils/MarcadoresAPI"
 import ListaMarcadores from "./ListaMarcadores.js"
 import escapeRegExp from "escape-string-regexp"
+import Modal from "react-responsive-modal"
+import request from "request"
 
 class App extends Component {
 	state = {
-		marcadores: [
-			  {
-			    "nome": "Porpino Burger",
-			    "endereco": "Jerônimo Pimentel, 242",
-			    "lat": -1.442430694656103,
-			    "lng": -48.488064103178374
-			  },
-			  {
-			    "nome": "Roxy Bar",
-			    "endereco": "Av. Senador Lemos, 231",
-			    "lat": -1.4412027502407205,
-			    "lng": -48.489757776260376
-			  },
-			  {
-			    "nome": "Cia. Paulista de Pizza",
-			    "endereco": "Av. Visc. de Souza Franco, 559",
-			    "lat": -1.443236819183104,
-			    "lng": -48.48991106226811
-			  },
-			  {
-			    "nome": "D'Opará",
-			    "endereco": "Av. Sen. Lemos",
-			    "lat": -1.4421665904806702,
-			    "lng": -48.48984166720438
-			  },
-			  {
-			    "nome": "Armazém Belém",
-			    "endereco": "Boulevard Shopping (Piso 1, Lj. 163)",
-			    "lat": -1.4456159017835408,
-			    "lng": -48.489071420094675
-			  },
-			  {
-			    "nome": "Cairu",
-			    "endereco": "Boulevard Shopping (Piso 4, Lj. 412)",
-			    "lat": -1.445670539090734,
-			    "lng": -48.48890663650532
-			  }
-		],
+		marcadores: [],
 		isLateralToggled: false,
 		marcadorSelecionado: null,
-		query: ""
+		query: "",
+		modalOpen: false
 	}
 
 	componentDidMount() {
@@ -69,9 +35,35 @@ class App extends Component {
 	}
 
 	createMarcador(marcador) {
+		request({
+              url: "https://api.foursquare.com/v2/venues/" + marcador["id"] + "/photos",
+              method: "GET",
+              qs: {
+                client_id: "DFT4IMWTELLO00IVL3AHBOBW45LRBGO0D34SY14E155LUCBK",
+                client_secret: "FT25LN2Q2LAI0KMPSY5YEACTC0X2DFXCQKNKB1TQTYLLQ3NC",
+                v: "20180323",
+                "limit": "1"
+              }
+            }, function(err, res, body) {
+              if (err) {
+                console.error(err);
+               } else if (JSON.parse(body)["meta"]["code"] == 429) {
+                  console.error(JSON.parse(body)["meta"]["errorDetail"]);
+                } else {
+                	let corpo = JSON.parse(body)
+	                marcador["img"] = corpo["response"]["photos"]["items"][0]["prefix"]
+	                  +
+	                  "width"
+	                  +
+	                  corpo["response"]["photos"]["items"][0]["width"]
+	                  +
+	                  corpo["response"]["photos"]["items"][0]["suffix"]
+                  
+              }
+        })
 		MarcadoresAPI.create(marcador).then(marcador => {
 			this.setState(state => ({
-				marcadores: state.marcadores.concat([ marcador ])
+				marcadores: state.marcadores.push( marcador )
 			}))
 		})
 	}
@@ -81,12 +73,20 @@ class App extends Component {
 	}
 
 	mostrarAbout() {
-		alert("Feito com React, Google Maps e Yelp")
+		alert("Feito com React, Google Maps e Foursquare")
 	}
 
 	selecionarMarcador = (marcador) => {
 		this.setState({ marcadorSelecionado: marcador })
-		alert(marcador["nome"])
+		this.abrirModal()
+	}
+
+	abrirModal = () => {
+    	this.setState({ modalOpen: true })
+	}
+
+	fecharModal = () => {
+		this.setState({ modalOpen: false })
 	}
 
 	render() {
@@ -97,17 +97,11 @@ class App extends Component {
 	    } else {
 	      showingMarcadores = this.state.marcadores
 	    }
-
 		return (
 			<div className="app">
 				<nav className="nav">
 					<span className="botao">
 						<a href="/">Mapa do Umarizal</a>
-					</span>
-					<span className="botao">
-						<a
-							onClick={() => this.mostrarAbout()}
-						>Sobre</a>
 					</span>
 					<span className="hamburger">
 						<a
@@ -116,6 +110,11 @@ class App extends Component {
 						>
 							☰
 						</a>
+					</span>
+					<span className="hamburger">
+						<a
+							onClick={this.mostrarAbout}
+						>Sobre</a>
 					</span>
 				</nav>
 				<ListaMarcadores
@@ -131,7 +130,27 @@ class App extends Component {
 					marcadores={showingMarcadores}
 					selecionarMarcador={this.selecionarMarcador}
 					marcadorSelecionado={this.state.marcadorSelecionado}
+					createMarcador={this.createMarcador}
 				/>
+				<div>
+					<Modal open={this.state.modalOpen} onClose={this.fecharModal} center>
+						{this.state.marcadorSelecionado &&
+						<div>
+							<h2>{this.state.marcadorSelecionado["nome"]}</h2>
+							<p>
+		                    <strong>Categoria: </strong>
+		                      {this.state.marcadorSelecionado["categoria"]}
+		                    </p>
+		                    <p>
+		                    <strong>Endereço: </strong>
+		                      {this.state.marcadorSelecionado["endereco"]}
+		                    </p>
+		                    <a className="botao-apagar" onClick={() => {this.removeMarcador(this.state.marcadorSelecionado); this.fecharModal() }}>Apagar</a>
+							<img className="imagem" src={this.state.marcadorSelecionado["img"]} />
+						</div>
+						}
+					</Modal>
+				</div>
 			</div>
 			)
 	}

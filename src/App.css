@@ -29,7 +29,7 @@
 	top: 0;
 	height: 50px;
 	width: 100%;
-	font-size: 1.5em;
+	font-size: 1.25em;
 	z-index: 2;
 }
 
@@ -37,8 +37,10 @@
 	display: block;
 	color: white;
 	text-align: center;
-	padding: 8px 2em;
+	padding: 11px 1em;
 	text-decoration: none;
+	-webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
 	
 }
 
@@ -59,7 +61,7 @@
 	position: fixed;
 	border-right: 2px solid grey;
 	width: 18%;
-	font-size: 1.5em;
+	font-size: 1.25em;
 	overflow-y: auto;
 	top: 0;
 	bottom: 0;
@@ -118,6 +120,43 @@
 #map {
 	height: 100%;
 }
+
+.imagem {
+	width: 100%;
+	height: 500px;
+}
+
+.localEscolher {
+	cursor: pointer;
+	-webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    padding: 20px;
+}
+
+.localEscolher:hover {
+	background: rgba(0, 0, 0, 0.25);
+}
+
+.botao-apagar {
+	background: #f44336;
+    border: none;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    float: right;
+}
+
+.botao-apagar:hover {
+	background: #d72315;
+}
+
 
 @media screen and (max-width: 1200px) {
 	.sidebar {
