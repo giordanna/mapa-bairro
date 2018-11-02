@@ -40,7 +40,7 @@
 	padding: 11px 1em;
 	text-decoration: none;
 	-webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
+	transition-duration: 0.4s;
 	
 }
 
@@ -129,8 +129,8 @@
 .localEscolher {
 	cursor: pointer;
 	-webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-    padding: 20px;
+	transition-duration: 0.4s;
+	padding: 20px;
 }
 
 .localEscolher:hover {
@@ -139,18 +139,18 @@
 
 .botao-apagar {
 	background: #f44336;
-    border: none;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 10px 2px;
-    cursor: pointer;
-    border-radius: 8px;
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-    float: right;
+	border: none;
+	color: white;
+	padding: 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	margin: 10px 2px;
+	cursor: pointer;
+	border-radius: 8px;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+	float: right;
 }
 
 .botao-apagar:hover {
