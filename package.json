@@ -9,6 +9,7 @@
     "react-dom": "^16.5.2",
     "react-foursquare": "^1.0.3",
     "react-google-maps": "^9.4.5",
+    "react-notifications": "^1.4.3",
     "react-responsive-modal": "^3.5.0",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.0.5",

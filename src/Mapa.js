@@ -12,14 +12,13 @@ const MyMapComponent = compose(
 		clickableIcons={false}
 		defaultZoom={15}
 		defaultCenter={{ lat: -1.4413, lng: -48.4837 }}
-		onRightClick={(event) => props.addMarcador(event.latLng, props.addLista, props.abrirModal)}
+		onClick={(event) => props.addMarcador(event.latLng, props.addLista, props.abrirModal)}
 	>
 
 	{props.marcadores.map((marcador, i) => (
 		<MarcadorWrapper
 			key={i}
 			marcador={marcador}
-			marcadorSelecionado={props.marcadorSelecionado}
 			selecionarMarcador={props.selecionarMarcador}
 		/>
 	))}
@@ -57,7 +56,7 @@ class Mapa extends Component {
 	}
 
 	addLista = (lista) => {
-		this.setState({ possiveisLocais: lista})
+		this.setState({ possiveisLocais: lista })
 	}
 
 	addMarcador = (location, addLista, abrirModal) => {
@@ -80,9 +79,7 @@ class Mapa extends Component {
 					{
 						"id" : "erro",
 						"nome": "Erro: não foi possível recuperar",
-						"endereco": "Se você estiver vendo isso, provavelmente o limite de requisições foi atingido. Aguarde um dia.",
-						"lat": "erro",
-						"lng": "erro"
+						"endereco": "Se você estiver vendo isso, provavelmente o limite de requisições foi atingido. Aguarde um dia."
 					}
 				]
 			} else {
@@ -108,11 +105,42 @@ class Mapa extends Component {
 		})
 	}
 
+	atualizarImagem = (marcador, createMarcador) => {
+		if (marcador.id != "erro") {
+			request({
+				url: "https://api.foursquare.com/v2/venues/" + marcador["id"] + "/photos",
+				method: "GET",
+				qs: {
+					client_id: "DFT4IMWTELLO00IVL3AHBOBW45LRBGO0D34SY14E155LUCBK",
+					client_secret: "FT25LN2Q2LAI0KMPSY5YEACTC0X2DFXCQKNKB1TQTYLLQ3NC",
+					v: "20180323",
+					"limit": "1"
+				}
+			}, function(err, res, body) {
+				if (err) {
+					console.error(err);
+				} else if (JSON.parse(body)["meta"]["code"] == 429) {
+					console.error(JSON.parse(body)["meta"]["errorDetail"]);
+				} else {
+					let corpo = JSON.parse(body)
+					marcador["img"] = corpo["response"]["photos"]["items"][0]["prefix"]
+					+
+					"width"
+					+
+					corpo["response"]["photos"]["items"][0]["width"]
+					+
+					corpo["response"]["photos"]["items"][0]["suffix"]
+				}
+
+				createMarcador(marcador)
+			})
+		}
+	}
+
 	render() {
 		const {
 			isLateralToggled,
 			marcadores,
-			marcadorSelecionado,
 			selecionarMarcador,
 			createMarcador
 		} = this.props
@@ -121,7 +149,6 @@ class Mapa extends Component {
 			<main className={isLateralToggled ? "mapa-toggle" : "mapa"}>
 				<MyMapComponent
 					addMarcador={this.addMarcador}
-					marcadorSelecionado={marcadorSelecionado}
 					selecionarMarcador={selecionarMarcador}
 					marcadores={marcadores}
 					abrirModal={this.abrirModal}
@@ -142,8 +169,8 @@ class Mapa extends Component {
 						{this.state.possiveisLocais.map((local, i) => (
 							<div key={i}>
 								<div
-									className="localEscolher"
-									onClick={() => {createMarcador(local); this.fecharModal()}}
+									className="local-escolher"
+									onClick={() => {this.atualizarImagem(local, createMarcador); this.fecharModal()}}
 								>
 									<h3>{local["nome"]}</h3>
 									<p>

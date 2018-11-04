@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import "./App.css";
+import "./react-notifications.css";
 import Mapa from "./Mapa.js"
 import * as MarcadoresAPI from "./utils/MarcadoresAPI"
 import ListaMarcadores from "./ListaMarcadores.js"
 import escapeRegExp from "escape-string-regexp"
 import Modal from "react-responsive-modal"
 import request from "request"
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 class App extends Component {
 	state = {
@@ -30,51 +32,21 @@ class App extends Component {
 		this.setState((state) => ({
 			marcadores: state.marcadores.filter((c) => c.id !== marcador.id)
 		}))
-
 		MarcadoresAPI.remove(marcador)
+		NotificationManager.success('O marcador foi deletado!', 'Sucesso!')
 	}
 
-	createMarcador(marcador) {
-		request({
-			url: "https://api.foursquare.com/v2/venues/" + marcador["id"] + "/photos",
-			method: "GET",
-			qs: {
-				client_id: "DFT4IMWTELLO00IVL3AHBOBW45LRBGO0D34SY14E155LUCBK",
-				client_secret: "FT25LN2Q2LAI0KMPSY5YEACTC0X2DFXCQKNKB1TQTYLLQ3NC",
-				v: "20180323",
-				"limit": "1"
-			}
-		}, function(err, res, body) {
-			if (err) {
-				console.error(err);
-			} else if (JSON.parse(body)["meta"]["code"] == 429) {
-				console.error(JSON.parse(body)["meta"]["errorDetail"]);
-			} else {
-				let corpo = JSON.parse(body)
-				marcador["img"] = corpo["response"]["photos"]["items"][0]["prefix"]
-				+
-				"width"
-				+
-				corpo["response"]["photos"]["items"][0]["width"]
-				+
-				corpo["response"]["photos"]["items"][0]["suffix"]
-			}
-			MarcadoresAPI.create(marcador).then(marcador => {
-				this.setState(state => ({
-					marcadores: state.marcadores.push( marcador )
-				}))
-			})
+	createMarcador = (marcador) => {
+		MarcadoresAPI.create(marcador).then(marcador => {
+			this.setState(state => ({
+				marcadores: state.marcadores.concat( [marcador] )
+			}))
 		})
-
-		
+		NotificationManager.success('O marcador foi criado!', 'Sucesso!')
 	}
 
 	toggleLateral() {
 		this.setState({ isLateralToggled: !this.state.isLateralToggled })
-	}
-
-	mostrarAbout() {
-		alert("Feito com React, Google Maps e Foursquare")
 	}
 
 	selecionarMarcador = (marcador) => {
@@ -88,6 +60,10 @@ class App extends Component {
 
 	fecharModal = () => {
 		this.setState({ modalOpen: false })
+	}
+
+	mostrarSobre = () => {
+		NotificationManager.info('2018 © Giordanna De Gregoriis. Feito com React, usando a API do Google Maps e Foursquare', 'Sobre', 6000)
 	}
 
 	render() {
@@ -116,7 +92,7 @@ class App extends Component {
 					</span>
 					<span className="hamburger">
 						<a
-							onClick={this.mostrarAbout}
+							onClick={this.mostrarSobre}
 						>Sobre</a>
 					</span>
 				</nav>
@@ -153,7 +129,7 @@ class App extends Component {
 								</p>
 								<a
 									className="botao-apagar"
-									onClick={() => {this.removeMarcador(this.state.marcadorSelecionado); this.fecharModal() }}
+									onClick={() => {this.removeMarcador(this.state.marcadorSelecionado); this.fecharModal(); this.criarNotificacao("deletar")}}
 								>
 									Apagar
 								</a>
@@ -165,6 +141,8 @@ class App extends Component {
 						}
 					</Modal>
 				</div>
+
+				<NotificationContainer/>
 			</div>
 		)
 	}
