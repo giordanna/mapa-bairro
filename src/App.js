@@ -129,7 +129,7 @@ class App extends Component {
 								</p>
 								<a
 									className="botao-apagar"
-									onClick={() => {this.removeMarcador(this.state.marcadorSelecionado); this.fecharModal(); this.criarNotificacao("deletar")}}
+									onClick={() => {this.removeMarcador(this.state.marcadorSelecionado); this.fecharModal()}}
 								>
 									Apagar
 								</a>

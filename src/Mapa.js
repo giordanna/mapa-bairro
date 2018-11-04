@@ -123,13 +123,15 @@ class Mapa extends Component {
 					console.error(JSON.parse(body)["meta"]["errorDetail"]);
 				} else {
 					let corpo = JSON.parse(body)
-					marcador["img"] = corpo["response"]["photos"]["items"][0]["prefix"]
-					+
-					"width"
-					+
-					corpo["response"]["photos"]["items"][0]["width"]
-					+
-					corpo["response"]["photos"]["items"][0]["suffix"]
+					if (corpo["response"]["photos"]["items"][0]) {
+						marcador["img"] = corpo["response"]["photos"]["items"][0]["prefix"]
+						+
+						"width"
+						+
+						corpo["response"]["photos"]["items"][0]["width"]
+						+
+						corpo["response"]["photos"]["items"][0]["suffix"]
+					}
 				}
 
 				createMarcador(marcador)
