@@ -9,7 +9,7 @@ class ListaMarcadores extends Component {
 			isLateralToggled,
 			updateQuery,
 			query
-		} = this.props
+		} = this.props;
 
 		return (
 			<aside className={isLateralToggled ? "sidebar-toggle" : "sidebar"}>
@@ -31,8 +31,8 @@ class ListaMarcadores extends Component {
 					</div>
 				))}
 			</aside>
-		)
-	}
-}
+		);
+	};
+};
 
-export default ListaMarcadores
+export default ListaMarcadores;

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
-import { compose } from "recompose"
-import request from "request"
-import Modal from "react-responsive-modal"
+import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+import { compose } from "recompose";
+import request from "request";
+import Modal from "react-responsive-modal";
 
 const MyMapComponent = compose(
 	withScriptjs,
@@ -29,38 +29,38 @@ const MyMapComponent = compose(
 class MarcadorWrapper extends Component {
 
 	render() {
-		const { marcador } = this.props
+		const { marcador } = this.props;
 
 		return (
 			<Marker
 				position={{ lat: marcador.lat, lng: marcador.lng }}
 				onClick={() => this.props.selecionarMarcador(marcador)}
 			/>
-		)
-	}
-}
+		);
+	};
+};
 
 class Mapa extends Component {
 
 	state = {
 		modalOpen: false,
 		possiveisLocais: []
-	}
+	};
 
 	abrirModal = () => {
-		this.setState({ modalOpen: true })
-	}
+		this.setState({ modalOpen: true });
+	};
 
 	fecharModal = () => {
-		this.setState({ modalOpen: false })
-	}
+		this.setState({ modalOpen: false });
+	};
 
 	addLista = (lista) => {
-		this.setState({ possiveisLocais: lista })
-	}
+		this.setState({ possiveisLocais: lista });
+	};
 
 	addMarcador = (location, addLista, abrirModal) => {
-		let lista = []
+		let lista = [];
 		request({
 			url: "https://api.foursquare.com/v2/venues/explore",
 			method: "GET",
@@ -73,7 +73,7 @@ class Mapa extends Component {
 		}, function(err, res, body) {
 			if (err) {
 				console.error(err);
-			} else if (JSON.parse(body)["meta"]["code"] == 429) {
+			} else if (JSON.parse(body)["meta"]["code"] === 429) {
 				console.error(JSON.parse(body)["meta"]["errorDetail"]);
 				lista = [
 					{
@@ -81,32 +81,32 @@ class Mapa extends Component {
 						"nome": "Erro: não foi possível recuperar",
 						"endereco": "Se você estiver vendo isso, provavelmente o limite de requisições foi atingido. Aguarde um dia."
 					}
-				]
+				];
 			} else {
-				let corpo = JSON.parse(body)
+				let corpo = JSON.parse(body);
 				lista = corpo["response"]["groups"][0]["items"]
-				.sort((item_a, item_b) =>
-					item_a["venue"]["location"]["distance"] - item_b["venue"]["location"]["distance"])
-				.map((item) => (
-					{
-						"id" : item["venue"]["id"],
-						"nome": item["venue"]["name"],
-						"endereco": item["venue"]["location"]["address"],
-						"lat": item["venue"]["location"]["lat"],
-						"lng": item["venue"]["location"]["lng"],
-						"categoria": item["venue"]["categories"][0]["name"],
-						"img": "/img/erro.jpg"
-					}
-				))
+					.sort((item_a, item_b) =>
+						item_a["venue"]["location"]["distance"] - item_b["venue"]["location"]["distance"])
+					.map((item) => (
+						{
+							"id" : item["venue"]["id"],
+							"nome": item["venue"]["name"],
+							"endereco": item["venue"]["location"]["address"],
+							"lat": item["venue"]["location"]["lat"],
+							"lng": item["venue"]["location"]["lng"],
+							"categoria": item["venue"]["categories"][0]["name"],
+							"img": "/img/erro.jpg"
+						}
+					));
 
-				addLista(lista)
-				abrirModal()
+				addLista(lista);
+				abrirModal();
 			}
-		})
-	}
+		});
+	};
 
 	atualizarImagem = (marcador, createMarcador) => {
-		if (marcador.id != "erro") {
+		if (marcador.id !== "erro") {
 			request({
 				url: "https://api.foursquare.com/v2/venues/" + marcador["id"] + "/photos",
 				method: "GET",
@@ -119,10 +119,10 @@ class Mapa extends Component {
 			}, function(err, res, body) {
 				if (err) {
 					console.error(err);
-				} else if (JSON.parse(body)["meta"]["code"] == 429) {
+				} else if (JSON.parse(body)["meta"]["code"] === 429) {
 					console.error(JSON.parse(body)["meta"]["errorDetail"]);
 				} else {
-					let corpo = JSON.parse(body)
+					let corpo = JSON.parse(body);
 					if (corpo["response"]["photos"]["items"][0]) {
 						marcador["img"] = corpo["response"]["photos"]["items"][0]["prefix"]
 						+
@@ -130,14 +130,14 @@ class Mapa extends Component {
 						+
 						corpo["response"]["photos"]["items"][0]["width"]
 						+
-						corpo["response"]["photos"]["items"][0]["suffix"]
+						corpo["response"]["photos"]["items"][0]["suffix"];
 					}
 				}
 
-				createMarcador(marcador)
-			})
+				createMarcador(marcador);
+			});
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -145,7 +145,7 @@ class Mapa extends Component {
 			marcadores,
 			selecionarMarcador,
 			createMarcador
-		} = this.props
+		} = this.props;
 
 		return (
 			<main className={isLateralToggled ? "mapa-toggle" : "mapa"}>
@@ -190,8 +190,8 @@ class Mapa extends Component {
 					</Modal>
 				</div>
 			</main>
-		)
-	}
-}
+		);
+	};
+};
 
-export default Mapa
+export default Mapa;

@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import "./App.css";
 import "./react-notifications.css";
-import Mapa from "./Mapa.js"
-import * as MarcadoresAPI from "./utils/MarcadoresAPI"
-import ListaMarcadores from "./ListaMarcadores.js"
-import escapeRegExp from "escape-string-regexp"
-import Modal from "react-responsive-modal"
-import request from "request"
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import Mapa from "./Mapa.js";
+import * as MarcadoresAPI from "./utils/MarcadoresAPI";
+import ListaMarcadores from "./ListaMarcadores.js";
+import escapeRegExp from "escape-string-regexp";
+import Modal from "react-responsive-modal";
+import {NotificationContainer, NotificationManager} from "react-notifications";
 
 class App extends Component {
 	state = {
@@ -16,64 +15,64 @@ class App extends Component {
 		marcadorSelecionado: null,
 		query: "",
 		modalOpen: false
-	}
+	};
 
 	componentDidMount() {
 		MarcadoresAPI.getAll().then((marcadores) => {
-			this.setState({ marcadores })
-		})
-	}
+			this.setState({ marcadores });
+		});
+	};
 
 	updateQuery = (query) => {
-		this.setState({ query: query.trim() })
-	}
+		this.setState({ query: query.trim() });
+	};
 
 	removeMarcador = (marcador) => {
 		this.setState((state) => ({
 			marcadores: state.marcadores.filter((c) => c.id !== marcador.id)
-		}))
-		MarcadoresAPI.remove(marcador)
-		NotificationManager.success('O marcador foi deletado!', 'Sucesso!')
-	}
+		}));
+		MarcadoresAPI.remove(marcador);
+		NotificationManager.success("O marcador foi deletado!", "Sucesso!");
+	};
 
 	createMarcador = (marcador) => {
 		MarcadoresAPI.create(marcador).then(marcador => {
 			this.setState(state => ({
 				marcadores: state.marcadores.concat( [marcador] )
-			}))
-		})
-		NotificationManager.success('O marcador foi criado!', 'Sucesso!')
-	}
+			}));
+		});
+		NotificationManager.success("O marcador foi criado!", "Sucesso!");
+	};
 
 	toggleLateral() {
-		this.setState({ isLateralToggled: !this.state.isLateralToggled })
-	}
+		this.setState({ isLateralToggled: !this.state.isLateralToggled });
+	};
 
 	selecionarMarcador = (marcador) => {
-		this.setState({ marcadorSelecionado: marcador })
-		this.abrirModal()
-	}
+		this.setState({ marcadorSelecionado: marcador });
+		this.abrirModal();
+	};
 
 	abrirModal = () => {
-		this.setState({ modalOpen: true })
-	}
+		this.setState({ modalOpen: true });
+	};
 
 	fecharModal = () => {
-		this.setState({ modalOpen: false })
-	}
+		this.setState({ modalOpen: false });
+	};
 
 	mostrarSobre = () => {
-		NotificationManager.info('2018 © Giordanna De Gregoriis. Feito com React, usando a API do Google Maps e Foursquare', 'Sobre', 6000)
-	}
+		NotificationManager.info("2018 © Giordanna De Gregoriis. Feito com React, usando a API do Google Maps e Foursquare", "Sobre", 6000);
+	};
 
 	render() {
-		let showingMarcadores
+		let showingMarcadores;
 
 		if (this.state.query) {
-			const match = new RegExp(escapeRegExp(this.state.query), "i")
-			showingMarcadores = this.state.marcadores.filter((marcador) => match.test(marcador.nome))
+			const match = new RegExp(escapeRegExp(this.state.query), "i");
+			showingMarcadores = this.state.marcadores.filter((marcador) => match.test(marcador.nome));
 		} else {
-			showingMarcadores = this.state.marcadores
+			showingMarcadores = this.state.marcadores;
 		}
 
 		return (
@@ -93,7 +92,9 @@ class App extends Component {
 					<span className="hamburger">
 						<a
 							onClick={this.mostrarSobre}
-						>Sobre</a>
+						>
+							Sobre
+						</a>
 					</span>
 				</nav>
 
@@ -136,6 +137,7 @@ class App extends Component {
 								<img
 									className="imagem"
 									src={this.state.marcadorSelecionado["img"]}
+									alt={"Foto de " + this.state.marcadorSelecionado["titulo"]}
 								/>
 							</div>
 						}
@@ -144,8 +146,8 @@ class App extends Component {
 
 				<NotificationContainer/>
 			</div>
-		)
-	}
-}
+		);
+	};
+};
 
-export default App
+export default App;
