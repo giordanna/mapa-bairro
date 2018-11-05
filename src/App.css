@@ -118,6 +118,10 @@
 	width: 100%;
 }
 
+.infowindow {
+	color: black;
+}
+
 /* Botão para apagar o marcador */
 .botao-apagar {
 	background: #f44336;

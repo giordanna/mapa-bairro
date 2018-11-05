@@ -2,7 +2,7 @@
   "name": "mapabairro",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://giordanna.github.io/mapa-bairro",
+  "homepage": "https://giordanna.github.io/mapa-bairro",
   "dependencies": {
     "escape-string-regexp": "^1.0.5",
     "prop-types": "^15.6.2",

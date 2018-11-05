@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps";
 import { compose } from "recompose";
 import request from "request";
 import Modal from "react-responsive-modal";
@@ -24,6 +24,8 @@ const MyMapComponent = compose(
 			marcador={marcador}
 			selecionarMarcador={props.selecionarMarcador}
 			marcadorSelecionado={props.marcadorSelecionado}
+			deselecionarMarcador={props.deselecionarMarcador}
+			abrirModalApp={props.abrirModalApp}
 		/>
 	))}
 
@@ -34,6 +36,7 @@ const MyMapComponent = compose(
 * @description Classe de auxílio do marcador para poder definir funções e estados individualmente
 */
 class MarcadorWrapper extends Component {
+
 	/**
 	* @description Renderiza o conteúdo da aplicação da classe MarcadorWrapper
 	*/
@@ -41,7 +44,9 @@ class MarcadorWrapper extends Component {
 		const {
 			marcador,
 			selecionarMarcador,
-			marcadorSelecionado
+			deselecionarMarcador,
+			marcadorSelecionado,
+			abrirModalApp
 		} = this.props;
 
 		return (
@@ -56,7 +61,27 @@ class MarcadorWrapper extends Component {
 				}
 				position={{ lat: marcador.lat, lng: marcador.lng }}
 				onClick={() => selecionarMarcador(marcador)}
-			/>
+			>
+				{ marcadorSelecionado && marcadorSelecionado["id"] == marcador["id"] &&
+					<InfoWindow onCloseClick={() => deselecionarMarcador()}>
+						<div
+							onClick={() => abrirModalApp()}
+							className="infowindow"
+						>
+							<h2>{marcador["nome"]}</h2>
+							<p>
+								<strong>Categoria: </strong>
+								{marcador["categoria"]}
+							</p>
+							<p>
+								<strong>Endereço: </strong>
+								{marcador["endereco"]}
+							</p>
+							<p>Clique para mais detalhes!</p>
+						</div>
+					</InfoWindow>
+				}
+			</Marker>
 		);
 	};
 };
@@ -204,8 +229,10 @@ class Mapa extends Component {
 			isLateralToggled,
 			marcadores,
 			selecionarMarcador,
+			deselecionarMarcador,
 			createMarcador,
-			marcadorSelecionado
+			marcadorSelecionado,
+			abrirModalApp
 		} = this.props;
 
 		return (
@@ -213,9 +240,11 @@ class Mapa extends Component {
 				<MyMapComponent
 					pesquisaFoursquare={this.pesquisaFoursquare}
 					selecionarMarcador={selecionarMarcador}
+					deselecionarMarcador={deselecionarMarcador}
 					marcadores={marcadores}
 					marcadorSelecionado={marcadorSelecionado}
 					abrirModal={this.abrirModal}
+					abrirModalApp={abrirModalApp}
 					addLista={this.addLista}
 					googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDk9y-BWlt1u5klFVBGxWocj2DnHV_e9k&libraries=geometry,drawing,places"
 					loadingElement={<div style={{ height: `100%` }} />}

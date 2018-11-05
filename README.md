@@ -1,6 +1,8 @@
 # Mapa do bairro
 Quinto projeto do curso nanodegree da Udacity de Desenvolvedor Full-stack.
 
+Veja ele rodando no [Github Pages](https://giordanna.github.io/mapa-bairro/).
+
 Este projeto foi criado com o [Create React App](https://github.com/facebook/create-react-app).
 
 É uma aplicação de página única apresentando um mapa do bairro Umarizal. Nele estão alguns locais já marcados. A aplicação permite que o usuário insira e remova mais marcadores. São utilizadas a API do Google Maps e do Foursquare.

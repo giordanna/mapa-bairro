@@ -108,7 +108,13 @@ class App extends Component {
 	*/
 	selecionarMarcador = (marcador) => {
 		this.setState({ marcadorSelecionado: marcador });
-		this.abrirModal();
+	};
+
+	/**
+	* @description Altera o estado de marcador selecionado para nulo
+	*/
+	deselecionarMarcador = () => {
+		this.setState({ marcadorSelecionado: null });
 	};
 	
 	/**
@@ -183,8 +189,10 @@ class App extends Component {
 					isLateralToggled={this.state.isLateralToggled}
 					marcadores={showingMarcadores}
 					selecionarMarcador={this.selecionarMarcador}
+					deselecionarMarcador={this.deselecionarMarcador}
 					marcadorSelecionado={this.state.marcadorSelecionado}
 					createMarcador={this.createMarcador}
+					abrirModalApp={this.abrirModal}
 				/>
 
 				<div>
