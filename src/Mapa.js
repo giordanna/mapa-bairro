@@ -4,6 +4,9 @@ import { compose } from "recompose";
 import request from "request";
 import Modal from "react-responsive-modal";
 
+/**
+* @description Componente onde é renderizado o mapa do Google Maps e seus marcadores
+*/
 const MyMapComponent = compose(
 	withScriptjs,
 	withGoogleMap
@@ -12,7 +15,7 @@ const MyMapComponent = compose(
 		clickableIcons={false}
 		defaultZoom={15}
 		defaultCenter={{ lat: -1.4413, lng: -48.4837 }}
-		onClick={(event) => props.addMarcador(event.latLng, props.addLista, props.abrirModal)}
+		onClick={(event) => props.pesquisaFoursquare(event.latLng, props.addLista, props.abrirModal)}
 	>
 
 	{props.marcadores.map((marcador, i) => (
@@ -20,26 +23,47 @@ const MyMapComponent = compose(
 			key={i}
 			marcador={marcador}
 			selecionarMarcador={props.selecionarMarcador}
+			marcadorSelecionado={props.marcadorSelecionado}
 		/>
 	))}
 
 	</GoogleMap>
 )
 
+/**
+* @description Classe de auxílio do marcador para poder definir funções e estados individualmente
+*/
 class MarcadorWrapper extends Component {
-
+	/**
+	* @description Renderiza o conteúdo da aplicação da classe MarcadorWrapper
+	*/
 	render() {
-		const { marcador } = this.props;
+		const {
+			marcador,
+			selecionarMarcador,
+			marcadorSelecionado
+		} = this.props;
 
 		return (
 			<Marker
+				animation={window.google.maps.Animation.DROP}
+				icon={
+					{
+						url: marcadorSelecionado == marcador ?
+						"http://maps.google.com/mapfiles/ms/icons/blue-dot.png":
+						"http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+					}
+				}
 				position={{ lat: marcador.lat, lng: marcador.lng }}
-				onClick={() => this.props.selecionarMarcador(marcador)}
+				onClick={() => selecionarMarcador(marcador)}
 			/>
 		);
 	};
 };
 
+/**
+* @description Classe do mapa onde é passado alguns props e definido alguns estados
+*/
 class Mapa extends Component {
 
 	state = {
@@ -47,20 +71,38 @@ class Mapa extends Component {
 		possiveisLocais: []
 	};
 
+	/**
+	* @description Altera o estado do modal para aberto
+	*/
 	abrirModal = () => {
 		this.setState({ modalOpen: true });
 	};
 
+	/**
+	* @description Altera o estado do modal para fechado
+	*/
 	fecharModal = () => {
 		this.setState({ modalOpen: false });
 	};
 
+	/**
+	* @description Altera o estado da lista com o parâmetro dado
+	* @param {Object} lista - lista com os locais capturados pela pesquisa no Foursquare
+	*/
 	addLista = (lista) => {
 		this.setState({ possiveisLocais: lista });
 	};
-
-	addMarcador = (location, addLista, abrirModal) => {
+	
+	/**
+	* @description Utiliza a API do Foursquare para pesquisar os locais da área clicada
+	* @param {Object} location - Latitude e longitude clicada pelo usuário
+	* @param {function} addLista - Função para atualizar lista dos locais pesquisados
+	* @param {function} abrirModal - Função para abrir o modal com os locais descobertos 
+	*/
+	pesquisaFoursquare = (location, addLista, abrirModal) => {
 		let lista = [];
+
+		// início do trecho de pesquisa do Foursquare
 		request({
 			url: "https://api.foursquare.com/v2/venues/explore",
 			method: "GET",
@@ -74,6 +116,7 @@ class Mapa extends Component {
 			if (err) {
 				console.error(err);
 			} else if (JSON.parse(body)["meta"]["code"] === 429) {
+				// trata o erro de caso tenha sido atingido o limite de requisições
 				console.error(JSON.parse(body)["meta"]["errorDetail"]);
 				lista = [
 					{
@@ -84,29 +127,39 @@ class Mapa extends Component {
 				];
 			} else {
 				let corpo = JSON.parse(body);
-				lista = corpo["response"]["groups"][0]["items"]
-					.sort((item_a, item_b) =>
-						item_a["venue"]["location"]["distance"] - item_b["venue"]["location"]["distance"])
-					.map((item) => (
-						{
-							"id" : item["venue"]["id"],
-							"nome": item["venue"]["name"],
-							"endereco": item["venue"]["location"]["address"],
-							"lat": item["venue"]["location"]["lat"],
-							"lng": item["venue"]["location"]["lng"],
-							"categoria": item["venue"]["categories"][0]["name"],
-							"img": "/img/erro.jpg"
-						}
-					));
+				if (corpo["response"]["groups"][0]["items"]) {
+					// primeiro ordena do mais próximo ao mais distante da distância dada pelo usuário
+					lista = corpo["response"]["groups"][0]["items"]
+						.sort((item_a, item_b) =>
+							item_a["venue"]["location"]["distance"] - item_b["venue"]["location"]["distance"])
+						.map((item) => (
+							{
+								"id" : item["venue"]["id"],
+								"nome": item["venue"]["name"],
+								"endereco": item["venue"]["location"]["address"],
+								"lat": item["venue"]["location"]["lat"],
+								"lng": item["venue"]["location"]["lng"],
+								"categoria": item["venue"]["categories"][0]["name"],
+								"img": "/img/erro.jpg"
+							}
+						));
+					// fim do trecho de pesquisa do Foursquare
 
-				addLista(lista);
-				abrirModal();
+					addLista(lista);
+					abrirModal();
+				}
 			}
 		});
 	};
 
+	/**
+	* @description Utiliza a API do Foursquare buscar mais informações do local escolhido
+	* @param {Object} marcador - Marcador escolhido
+	* @param {function} createMarcador - Função adicionar o marcador no estado da aplicação
+	*/
 	atualizarImagem = (marcador, createMarcador) => {
 		if (marcador.id !== "erro") {
+			// início do trecho de pesquisa do Foursquare
 			request({
 				url: "https://api.foursquare.com/v2/venues/" + marcador["id"] + "/photos",
 				method: "GET",
@@ -120,10 +173,13 @@ class Mapa extends Component {
 				if (err) {
 					console.error(err);
 				} else if (JSON.parse(body)["meta"]["code"] === 429) {
+					// trata o erro de caso tenha sido atingido o limite de requisições
 					console.error(JSON.parse(body)["meta"]["errorDetail"]);
 				} else {
 					let corpo = JSON.parse(body);
+					console.log(corpo);
 					if (corpo["response"]["photos"]["items"][0]) {
+						// cria a url da imagem
 						marcador["img"] = corpo["response"]["photos"]["items"][0]["prefix"]
 						+
 						"width"
@@ -133,26 +189,32 @@ class Mapa extends Component {
 						corpo["response"]["photos"]["items"][0]["suffix"];
 					}
 				}
+				// fim do trecho de pesquisa do Foursquare
 
 				createMarcador(marcador);
 			});
 		}
 	};
 
+	/**
+	* @description Renderiza o conteúdo da aplicação da classe Mapa
+	*/
 	render() {
 		const {
 			isLateralToggled,
 			marcadores,
 			selecionarMarcador,
-			createMarcador
+			createMarcador,
+			marcadorSelecionado
 		} = this.props;
 
 		return (
 			<main className={isLateralToggled ? "mapa-toggle" : "mapa"}>
 				<MyMapComponent
-					addMarcador={this.addMarcador}
+					pesquisaFoursquare={this.pesquisaFoursquare}
 					selecionarMarcador={selecionarMarcador}
 					marcadores={marcadores}
+					marcadorSelecionado={marcadorSelecionado}
 					abrirModal={this.abrirModal}
 					addLista={this.addLista}
 					googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDk9y-BWlt1u5klFVBGxWocj2DnHV_e9k&libraries=geometry,drawing,places"

@@ -1,10 +1,16 @@
 import React, { Component } from "react";
 
+/**
+* @description Classe que lida com a renderização da lista de marcadores
+*/
 class ListaMarcadores extends Component {
-
+	/**
+	* @description Renderiza o conteúdo da aplicação da classe ListaMarcadores
+	*/
 	render() {
 		const {
 			marcadores,
+			marcadorSelecionado,
 			selecionarMarcador,
 			isLateralToggled,
 			updateQuery,
@@ -24,7 +30,7 @@ class ListaMarcadores extends Component {
 				{marcadores.map((marcador, i) => (
 					<div
 						key={i}
-						className="sidebar-inner"
+						className={"sidebar-inner" + (marcadorSelecionado == marcador ? " selecionado" : "")}
 						onClick={() => selecionarMarcador(marcador)}
 					>
 						<p>{marcador.nome}</p>

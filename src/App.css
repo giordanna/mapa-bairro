@@ -3,25 +3,7 @@
 	height: 100%;
 }
 
-.entrada-filtro {
-	text-align: center;
-	width: 100%;
-	padding: 10px 0;
-	color: grey;
-	background: #222;
-	font-size: 1em;
-	border: 0;
-	outline: none;
-}
-
-.botao-filtrar {
-	margin: 0;
-	background: none;
-	border: none;
-	width: 20%;
-	font-size: 1em;
-}
-
+/* Barra de navegação */
 .nav {
 	background: #282c34;
 	border-bottom: 2px solid grey;
@@ -53,10 +35,11 @@
 	float: left;
 }
 
-.hamburger {
+.botao-direita {
 	float: right;
 }
 
+/* Barra lateral com os marcadores listados */
 .sidebar {
 	position: fixed;
 	border-right: 2px solid grey;
@@ -71,11 +54,23 @@
 	z-index: 1; 
 }
 
+/* Campo de entrada para filtrar marcadores */
+.entrada-filtro {
+	text-align: center;
+	width: 100%;
+	padding: 10px 0;
+	color: grey;
+	background: #222;
+	font-size: 1em;
+	border: 0;
+	outline: none;
+}
+
 .sidebar-inner {
 	margin: -20px 0;
 }
 
-.sidebar-inner .selecionado {
+.selecionado {
 	background: #282c34;
 }
 
@@ -88,6 +83,7 @@
 	display: none;
 }
 
+/* Mapa do Google Maps */
 .mapa {
 	position: fixed;
 	margin-left: 18%;
@@ -113,29 +109,16 @@
 	z-index: 0;
 }
 
-.info {
-	color: black;
-}
-
 #map {
 	height: 100%;
 }
 
+/* Imagem que aparece no modal */
 .imagem {
 	width: 100%;
 }
 
-.local-escolher {
-	cursor: pointer;
-	-webkit-transition-duration: 0.4s; /* Safari */
-	transition-duration: 0.4s;
-	padding: 20px;
-}
-
-.local-escolher:hover {
-	background: rgba(0, 225, 0, 0.25);
-}
-
+/* Botão para apagar o marcador */
 .botao-apagar {
 	background: #f44336;
 	border: none;
@@ -155,6 +138,19 @@
 .botao-apagar:hover {
 	background: #d72315;
 }
+
+/* Item da lista de locais */
+.local-escolher {
+	cursor: pointer;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+	padding: 20px;
+}
+
+.local-escolher:hover {
+	background: rgba(0, 225, 0, 0.25);
+}
+
 
 
 @media screen and (max-width: 1200px) {
