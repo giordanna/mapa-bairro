@@ -25,6 +25,8 @@ class App extends Component {
 	*/
 	componentDidMount() {
 
+		NotificationManager.info("Aguarde 5 segundos até que os marcadores padrões sejam carregados...");
+
 		let ids = [
 			"5572f58a498eef85adf4f1b4",
 			"4c310017ac0ab71342201c1e",
@@ -60,14 +62,15 @@ class App extends Component {
 			// fim do trecho de pesquisa do Foursquare
 		});
 
-		// evita um probleminha de renderização no início
+		// evita um probleminha de renderização no início se a conexão estiver muito lenta
 		// TODO: conseguir envolver essa tarefa em um promise para
 		// poder usar o then()
 		setTimeout(() => {
 			this.setState({
 				marcadores: marcadoresIniciais
 			});
-		}, 6000);
+			NotificationManager.success("Marcadores padrões carregados!", "Sucesso!");
+		}, 5000);
 	};
 
 	/**
