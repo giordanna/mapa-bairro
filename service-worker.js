@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/mapa-bairro/precache-manifest.33572d4f9da4ce61dee78ebe56d0f482.js"
+  "/mapa-bairro/precache-manifest.6701d9e8d9eb08def81f7085bddc8858.js"
 );
 
 workbox.clientsClaim();
