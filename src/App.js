@@ -5,6 +5,7 @@ import Mapa from "./Mapa.js";
 import ListaMarcadores from "./ListaMarcadores.js";
 import escapeRegExp from "escape-string-regexp";
 import Modal from "react-responsive-modal";
+import request from "request";
 import {NotificationContainer, NotificationManager} from "react-notifications";
 
 /**
@@ -12,59 +13,63 @@ import {NotificationContainer, NotificationManager} from "react-notifications";
 */
 class App extends Component {
 	state = {
-		marcadores: [
-			{
-				"id": "5572f58a498eef85adf4f1b4",
-				"nome": "Porpino Burger",
-				"endereco": "Jerônimo Pimentel, 242",
-				"lat": -1.442430694656103,
-				"lng": -48.488064103178374,
-				"categoria": "Hamburgueria",
-				"img": "https://fastly.4sqi.net/img/general/width960/21789324_2E9_KjuF0gbEvyXpKZECwylJ46jlHXdoiOVD3EzDLDg.jpg"
-			},
-			{
-				"id":   "4c310017ac0ab71342201c1e",
-				"nome": "Roxy Bar",
-				"endereco": "Av. Senador Lemos, 231",
-				"lat": -1.4412027502407205,
-				"lng": -48.489757776260376,
-				"categoria": "Restaurante Brasileiro",
-				"img": "https://fastly.4sqi.net/img/general/width540/rOzIJJ-OZof180f5osQ6wIkPz0nSYlWgfTRZidmsV-k.jpg"
-			},
-			{
-				"id": "4d95fca8daec224bf29d0b3e",
-				"nome": "Cia. Paulista de Pizza",
-				"endereco": "Av. Visc. de Souza Franco, 559",
-				"lat": -1.443236819183104,
-				"lng": -48.48991106226811,
-				"categoria": "Pizzaria",
-				"img": "https://fastly.4sqi.net/img/general/width720/ui_jo7sFhPgq4hrexbiDdouwf_l-3H4skjAUWadUQ4A.jpg"
-			},
-			{
-				"id": "4eb732a9991165b76327d02e",
-				"nome": "D'Opará",
-				"endereco": "Av. Sen. Lemos",
-				"lat": -1.4421665904806702,
-				"lng": -48.48984166720438,
-				"categoria": "Bar",
-				"img": "https://fastly.4sqi.net/img/general/width720/32543379__rH7XAvKtJxn1zqDXEcMA9r0gvBWOnpjJFXdZhBxmww.jpg"
-			},
-			{
-				"id": "4bd074c841b9ef3ba113fae5",
-				"nome": "Cairu",
-				"endereco": "Boulevard Shopping (Piso 4, Lj. 412)",
-				"lat": -1.445670539090734,
-				"lng": -48.48890663650532,
-				"categoria": "Sorveteria",
-				"img": "https://fastly.4sqi.net/img/general/width720/6311225_UWZLEqh5eRLIDSLeRnphkSDKU-c3SQnMsWFDTdHgeMA.jpg"
-			}
-		],
+		marcadores: [],
 		isLateralToggled: false,
 		marcadorSelecionado: null,
 		query: "",
 		modalOpen: false
 	};
-	
+
+	/**
+	* @description Função para realizar operações depois que a aplicação é renderizada
+	*/
+	componentDidMount() {
+
+		let ids = [
+			"5572f58a498eef85adf4f1b4",
+			"4c310017ac0ab71342201c1e",
+			"4d95fca8daec224bf29d0b3e",
+			"4eb732a9991165b76327d02e",
+			"4bd074c841b9ef3ba113fae5"
+		];
+
+		let marcadoresIniciais = [];
+
+		ids.map((id) => {
+			// início do trecho de pesquisa do Foursquare
+			request({
+				url: "https://api.foursquare.com/v2/venues/" + id,
+				method: "GET",
+				qs: {
+					client_id: "DFT4IMWTELLO00IVL3AHBOBW45LRBGO0D34SY14E155LUCBK",
+					client_secret: "FT25LN2Q2LAI0KMPSY5YEACTC0X2DFXCQKNKB1TQTYLLQ3NC",
+					v: "20180323"
+				}
+			}, function(err, res, body) {
+				if (err) {
+					console.error(err);
+				} else if (JSON.parse(body)["meta"]["code"] === 429) {
+					// trata o erro de caso tenha sido atingido o limite de requisições
+					console.error(JSON.parse(body)["meta"]["errorDetail"]);
+					NotificationManager.error("Houve um problema ao tentar recuperar informações do local", "Erro");
+				} else {
+					let corpo = JSON.parse(body);
+					marcadoresIniciais.push(corpo["response"]["venue"]);
+				}
+			});
+			// fim do trecho de pesquisa do Foursquare
+		});
+
+		// evita um probleminha de renderização no início
+		// TODO: conseguir envolver essa tarefa em um promise para
+		// poder usar o then()
+		setTimeout(() => {
+			this.setState({
+				marcadores: marcadoresIniciais
+			});
+		}, 6000);
+	};
+
 	/**
 	* @description Atualiza o estado da query para refletir no componente de lista de marcadores
 	* @param {string} query - Entrada do usuário de filtro
@@ -72,7 +77,7 @@ class App extends Component {
 	updateQuery = (query) => {
 		this.setState({ query: query.trim() });
 	};
-	
+
 	/**
 	* @description Atualiza o estado de marcadores, removendo o marcador indicado pelo parâmetro
 	* @param {Object} marcador - Marcador selecionado pelo usuário
@@ -101,7 +106,7 @@ class App extends Component {
 	toggleLateral() {
 		this.setState({ isLateralToggled: !this.state.isLateralToggled });
 	};
-	
+
 	/**
 	* @description Altera o estado de marcador selecionado pelo indicado pelo parâmetro
 	* @param {Object} marcador - Marcador selecionado pelo usuário
@@ -116,7 +121,7 @@ class App extends Component {
 	deselecionarMarcador = () => {
 		this.setState({ marcadorSelecionado: null });
 	};
-	
+
 	/**
 	* @description Altera o estado do modal para aberto
 	*/
@@ -130,14 +135,14 @@ class App extends Component {
 	fecharModal = () => {
 		this.setState({ modalOpen: false, marcadorSelecionado: null });
 	};
-	
+
 	/**
 	* @description Mostra informações sobre a aplicação
 	*/
 	mostrarSobre = () => {
 		NotificationManager.info("2018 © Giordanna De Gregoriis. Feito com React, usando a API do Google Maps e Foursquare", "Sobre", 6000);
 	};
-	
+
 	/**
 	* @description Renderiza o conteúdo da aplicação da classe App
 	*/
@@ -147,7 +152,7 @@ class App extends Component {
 		
 		if (this.state.query) {
 			const match = new RegExp(escapeRegExp(this.state.query), "i");
-			showingMarcadores = this.state.marcadores.filter((marcador) => match.test(marcador.nome));
+			showingMarcadores = this.state.marcadores.filter((marcador) => match.test(marcador["name"]));
 		} else {
 			showingMarcadores = this.state.marcadores;
 		}
@@ -199,14 +204,66 @@ class App extends Component {
 					<Modal open={this.state.modalOpen} onClose={this.fecharModal} center>
 						{this.state.marcadorSelecionado &&
 							<div>
-								<h2>{this.state.marcadorSelecionado["nome"]}</h2>
+								<h2>{this.state.marcadorSelecionado["name"]}</h2>
 								<p>
 									<strong>Categoria: </strong>
-									{this.state.marcadorSelecionado["categoria"]}
+									{this.state.marcadorSelecionado["categories"][0]["name"]}
+								</p>
+								{this.state.marcadorSelecionado["tips"] && 
+								<p>
+									<strong>Top comentário: </strong>
+									<em>
+										{
+											this.state.marcadorSelecionado["tips"]["groups"][0]["items"][0]["text"]
+										}
+									</em> - por {" "}
+									<a
+										target="_blank"
+										className="link"
+										href={this.state.marcadorSelecionado["tips"]["groups"][0]["items"][0]["canonicalUrl"]}
+									>
+										{
+											this.state.marcadorSelecionado["tips"]["groups"][0]["items"][0]["user"]["firstName"]
+										}
+									</a>
+								</p>
+								}
+								{this.state.marcadorSelecionado["price"] && 
+								<p>
+									<strong>Preço: </strong>
+									{
+										"💵 " + this.state.marcadorSelecionado["price"]["message"]
+									}
+								</p>
+								}
+								<p>
+									<strong>Avaliação: </strong>
+									{
+										"⭐ " + this.state.marcadorSelecionado["rating"]
+									}
+								</p>
+								<p>
+									<strong>Curtidas: </strong>
+									{
+										"👍 " + this.state.marcadorSelecionado["likes"]["count"]
+									}
 								</p>
 								<p>
 									<strong>Endereço: </strong>
-									{this.state.marcadorSelecionado["endereco"]}
+									{	"📍 " + this.state.marcadorSelecionado["location"]["formattedAddress"][0] +  " - " +
+										this.state.marcadorSelecionado["location"]["formattedAddress"][1]
+									}
+								</p>
+								<p>
+									<strong>
+										<a
+											target="_blank"
+											className="link"
+											href={this.state.marcadorSelecionado["canonicalUrl"]}
+										>
+											Veja mais no Foursquare
+										</a>
+									</strong>
 								</p>
 								<a
 									className="botao-apagar"
@@ -216,8 +273,12 @@ class App extends Component {
 								</a>
 								<img
 									className="imagem"
-									src={this.state.marcadorSelecionado["img"]}
-									alt={"Foto de " + this.state.marcadorSelecionado["titulo"]}
+									src={
+										this.state.marcadorSelecionado["bestPhoto"]["prefix"] +
+										"height500" +
+										this.state.marcadorSelecionado["bestPhoto"]["suffix"]
+									}
+									alt={"Foto de " + this.state.marcadorSelecionado["name"]}
 								/>
 							</div>
 						}

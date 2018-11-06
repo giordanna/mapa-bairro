@@ -54,28 +54,35 @@ class MarcadorWrapper extends Component {
 				animation={window.google.maps.Animation.DROP}
 				icon={
 					{
-						url: marcadorSelecionado == marcador ?
-						"http://maps.google.com/mapfiles/ms/icons/blue-dot.png":
+						url: marcadorSelecionado === marcador ?
+						"http://maps.google.com/mapfiles/ms/icons/green-dot.png":
 						"http://maps.google.com/mapfiles/ms/icons/red-dot.png"
 					}
 				}
-				position={{ lat: marcador.lat, lng: marcador.lng }}
+				position={{ lat: marcador["location"]["lat"], lng: marcador["location"]["lng"] }}
 				onClick={() => selecionarMarcador(marcador)}
 			>
-				{ marcadorSelecionado && marcadorSelecionado["id"] == marcador["id"] &&
+				{ marcadorSelecionado && marcadorSelecionado["id"] === marcador["id"] &&
 					<InfoWindow onCloseClick={() => deselecionarMarcador()}>
 						<div
 							onClick={() => abrirModalApp()}
 							className="infowindow"
 						>
-							<h2>{marcador["nome"]}</h2>
+							<img
+								className="imagem-infowindow"
+								src={
+									marcador["bestPhoto"]["prefix"] +
+									"height250" +
+									marcador["bestPhoto"]["suffix"]
+								}
+								alt={"Foto de " + marcador["name"]}
+							/>
+							<h2>{marcador["name"]}</h2>
 							<p>
-								<strong>Categoria: </strong>
-								{marcador["categoria"]}
+								{marcador["categories"][0]["name"]}
 							</p>
 							<p>
-								<strong>Endereço: </strong>
-								{marcador["endereco"]}
+								{marcador["location"]["formattedAddress"][0]}
 							</p>
 							<p>Clique para mais detalhes!</p>
 						</div>
@@ -162,10 +169,7 @@ class Mapa extends Component {
 								"id" : item["venue"]["id"],
 								"nome": item["venue"]["name"],
 								"endereco": item["venue"]["location"]["address"],
-								"lat": item["venue"]["location"]["lat"],
-								"lng": item["venue"]["location"]["lng"],
-								"categoria": item["venue"]["categories"][0]["name"],
-								"img": "/img/erro.jpg"
+								"categoria": item["venue"]["categories"][0]["name"]
 							}
 						));
 					// fim do trecho de pesquisa do Foursquare
@@ -182,17 +186,16 @@ class Mapa extends Component {
 	* @param {Object} marcador - Marcador escolhido
 	* @param {function} createMarcador - Função adicionar o marcador no estado da aplicação
 	*/
-	atualizarImagem = (marcador, createMarcador) => {
+	buscarDetalhes = (marcador, createMarcador) => {
 		if (marcador.id !== "erro") {
 			// início do trecho de pesquisa do Foursquare
 			request({
-				url: "https://api.foursquare.com/v2/venues/" + marcador["id"] + "/photos",
+				url: "https://api.foursquare.com/v2/venues/" + marcador["id"],
 				method: "GET",
 				qs: {
 					client_id: "DFT4IMWTELLO00IVL3AHBOBW45LRBGO0D34SY14E155LUCBK",
 					client_secret: "FT25LN2Q2LAI0KMPSY5YEACTC0X2DFXCQKNKB1TQTYLLQ3NC",
-					v: "20180323",
-					"limit": "1"
+					v: "20180323"
 				}
 			}, function(err, res, body) {
 				if (err) {
@@ -202,17 +205,7 @@ class Mapa extends Component {
 					console.error(JSON.parse(body)["meta"]["errorDetail"]);
 				} else {
 					let corpo = JSON.parse(body);
-					console.log(corpo);
-					if (corpo["response"]["photos"]["items"][0]) {
-						// cria a url da imagem
-						marcador["img"] = corpo["response"]["photos"]["items"][0]["prefix"]
-						+
-						"width"
-						+
-						corpo["response"]["photos"]["items"][0]["width"]
-						+
-						corpo["response"]["photos"]["items"][0]["suffix"];
-					}
+					marcador = corpo["response"]["venue"];
 				}
 				// fim do trecho de pesquisa do Foursquare
 
@@ -263,7 +256,7 @@ class Mapa extends Component {
 							<div key={i}>
 								<div
 									className="local-escolher"
-									onClick={() => {this.atualizarImagem(local, createMarcador); this.fecharModal()}}
+									onClick={() => {this.buscarDetalhes(local, createMarcador); this.fecharModal()}}
 								>
 									<h3>{local["nome"]}</h3>
 									<p>

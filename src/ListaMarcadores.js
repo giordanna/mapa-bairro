@@ -30,10 +30,10 @@ class ListaMarcadores extends Component {
 				{marcadores.map((marcador, i) => (
 					<div
 						key={i}
-						className={"sidebar-inner" + (marcadorSelecionado == marcador ? " selecionado" : "")}
+						className={"sidebar-inner" + (marcadorSelecionado === marcador ? " selecionado" : "")}
 						onClick={() => selecionarMarcador(marcador)}
 					>
-						<p>{marcador.nome}</p>
+						<p>{marcador["name"]}</p>
 					</div>
 				))}
 			</aside>

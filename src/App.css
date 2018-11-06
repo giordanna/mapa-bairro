@@ -115,11 +115,25 @@
 
 /* Imagem que aparece no modal */
 .imagem {
-	width: 100%;
+	display: block;
+	margin:auto;
+	max-width: 100%;
+}
+
+.link {
+	color: #282c34;
 }
 
 .infowindow {
-	color: black;
+	color: #282c34;
+}
+
+.infowindow:hover {
+	cursor: pointer;
+}
+
+.imagem-infowindow {
+	height: 200px;
 }
 
 /* Botão para apagar o marcador */
@@ -154,7 +168,6 @@
 .local-escolher:hover {
 	background: rgba(0, 225, 0, 0.25);
 }
-
 
 
 @media screen and (max-width: 1200px) {
