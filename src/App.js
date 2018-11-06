@@ -37,7 +37,7 @@ class App extends Component {
 
 		let marcadoresIniciais = [];
 
-		ids.map((id) => {
+		ids.map((id) => (
 			// início do trecho de pesquisa do Foursquare
 			request({
 				url: "https://api.foursquare.com/v2/venues/" + id,
@@ -58,9 +58,9 @@ class App extends Component {
 					let corpo = JSON.parse(body);
 					marcadoresIniciais.push(corpo["response"]["venue"]);
 				}
-			});
+			})
 			// fim do trecho de pesquisa do Foursquare
-		});
+		));
 
 		// evita um probleminha de renderização no início se a conexão estiver muito lenta
 		// TODO: conseguir envolver essa tarefa em um promise para
@@ -163,24 +163,35 @@ class App extends Component {
 
 		return (
 			<div className="app">
+				<a
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://github.com/giordanna/mapa-bairro"
+				>
+					<img
+						className="github"
+						src="img/github.png"
+						alt="Fork me on GitHub"
+					/>
+				</a>
 				<nav className="nav">
 					<span className="botao">
 						<a href="/">Mapa do Umarizal</a>
 					</span>
 					<span className="botao-direita">
-						<a
+						<button type="button"
 							title="Mostrar/Esconder Barra lateral"
 							onClick={() => this.toggleLateral()}
 						>
 							☰
-						</a>
+						</button>
 					</span>
 					<span className="botao-direita">
-						<a
+						<button type="button"
 							onClick={this.mostrarSobre}
 						>
 							Sobre
-						</a>
+						</button>
 					</span>
 				</nav>
 
@@ -222,6 +233,7 @@ class App extends Component {
 									</em> - por {" "}
 									<a
 										target="_blank"
+										rel="noopener noreferrer"
 										className="link"
 										href={this.state.marcadorSelecionado["tips"]["groups"][0]["items"][0]["canonicalUrl"]}
 									>
@@ -261,6 +273,7 @@ class App extends Component {
 									<strong>
 										<a
 											target="_blank"
+											rel="noopener noreferrer"
 											className="link"
 											href={this.state.marcadorSelecionado["canonicalUrl"]}
 										>
@@ -268,12 +281,13 @@ class App extends Component {
 										</a>
 									</strong>
 								</p>
-								<a
-									className="botao-apagar"
-									onClick={() => {this.removeMarcador(this.state.marcadorSelecionado); this.fecharModal()}}
-								>
-									Apagar
-								</a>
+								<span className="botao-apagar">
+									<button type="button"
+										onClick={() => {this.removeMarcador(this.state.marcadorSelecionado); this.fecharModal()}}
+									>
+										Apagar
+									</button>
+								</span>
 								<img
 									className="imagem"
 									src={

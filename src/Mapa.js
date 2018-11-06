@@ -1,97 +1,7 @@
 import React, { Component } from "react";
-import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps";
-import { compose } from "recompose";
+import MapaWrapper from "./MapaWrapper.js";
 import request from "request";
 import Modal from "react-responsive-modal";
-
-/**
-* @description Componente onde é renderizado o mapa do Google Maps e seus marcadores
-*/
-const MyMapComponent = compose(
-	withScriptjs,
-	withGoogleMap
-)(props =>
-	<GoogleMap
-		clickableIcons={false}
-		defaultZoom={15}
-		defaultCenter={{ lat: -1.4413, lng: -48.4837 }}
-		onClick={(event) => props.pesquisaFoursquare(event.latLng, props.addLista, props.abrirModal)}
-	>
-
-	{props.marcadores.map((marcador, i) => (
-		<MarcadorWrapper
-			key={i}
-			marcador={marcador}
-			selecionarMarcador={props.selecionarMarcador}
-			marcadorSelecionado={props.marcadorSelecionado}
-			deselecionarMarcador={props.deselecionarMarcador}
-			abrirModalApp={props.abrirModalApp}
-		/>
-	))}
-
-	</GoogleMap>
-)
-
-/**
-* @description Classe de auxílio do marcador para poder definir funções e estados individualmente
-*/
-class MarcadorWrapper extends Component {
-
-	/**
-	* @description Renderiza o conteúdo da aplicação da classe MarcadorWrapper
-	*/
-	render() {
-		const {
-			marcador,
-			selecionarMarcador,
-			deselecionarMarcador,
-			marcadorSelecionado,
-			abrirModalApp
-		} = this.props;
-
-		return (
-			<Marker
-				animation={window.google.maps.Animation.DROP}
-				icon={
-					{
-						url: marcadorSelecionado === marcador ?
-						"http://maps.google.com/mapfiles/ms/icons/green-dot.png":
-						"http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-					}
-				}
-				position={{ lat: marcador["location"]["lat"], lng: marcador["location"]["lng"] }}
-				onClick={() => selecionarMarcador(marcador)}
-			>
-				{ marcadorSelecionado && marcadorSelecionado["id"] === marcador["id"] &&
-					<InfoWindow onCloseClick={() => deselecionarMarcador()}>
-						<div
-							onClick={() => abrirModalApp()}
-							className="infowindow"
-						>
-							<img
-								className="imagem-infowindow"
-								src={
-									marcador["bestPhoto"]["prefix"] +
-									"height250" +
-									marcador["bestPhoto"]["suffix"]
-								}
-								alt={"Foto de " + marcador["name"]}
-							/>
-							<h2>{marcador["name"]}</h2>
-							<p>
-								{marcador["categories"][0]["name"]}
-							</p>
-							<p>
-								{marcador["location"]["formattedAddress"][0]}
-							</p>
-							<p>Clique para mais detalhes!</p>
-						</div>
-					</InfoWindow>
-				}
-			</Marker>
-		);
-	};
-};
 
 /**
 * @description Classe do mapa onde é passado alguns props e definido alguns estados
@@ -230,7 +140,7 @@ class Mapa extends Component {
 
 		return (
 			<main className={isLateralToggled ? "mapa-toggle" : "mapa"}>
-				<MyMapComponent
+				<MapaWrapper
 					pesquisaFoursquare={this.pesquisaFoursquare}
 					selecionarMarcador={selecionarMarcador}
 					deselecionarMarcador={deselecionarMarcador}

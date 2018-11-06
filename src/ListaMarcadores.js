@@ -1,21 +1,15 @@
-import React, { Component } from "react";
+import React from "react";
 
 /**
-* @description Classe que lida com a renderização da lista de marcadores
+* @description Componente lida com a renderização da lista de marcadores
 */
-class ListaMarcadores extends Component {
-	/**
-	* @description Renderiza o conteúdo da aplicação da classe ListaMarcadores
-	*/
-	render() {
-		const {
-			marcadores,
-			marcadorSelecionado,
-			selecionarMarcador,
-			isLateralToggled,
-			updateQuery,
-			query
-		} = this.props;
+const ListaMarcadores = (
+	{marcadores,
+	marcadorSelecionado,
+	selecionarMarcador,
+	isLateralToggled,
+	updateQuery,
+	query}) => {
 
 		return (
 			<aside className={isLateralToggled ? "sidebar-toggle" : "sidebar"}>
@@ -38,7 +32,6 @@ class ListaMarcadores extends Component {
 				))}
 			</aside>
 		);
-	};
 };
 
 export default ListaMarcadores;

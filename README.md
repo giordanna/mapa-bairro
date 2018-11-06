@@ -12,5 +12,8 @@ Este projeto foi criado com o [Create React App](https://github.com/facebook/cre
 - Dentro do diretório, instale as dependências usando `npm install`;
 - Agora inicie a aplicação com `npm start`.
 
+## TODOs
+- Implementar testes.
+
 ## Dúvidas
- - Caso há alguma dúvida em relação a este repositório, envie para gior.grs@gmail.com
+- Caso há alguma dúvida em relação a este repositório, envie para gior.grs@gmail.com

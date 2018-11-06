@@ -3,6 +3,14 @@
 	height: 100%;
 }
 
+.github {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	border: 0;
+	z-index: 3;
+}
+
 /* Barra de navegação */
 .nav {
 	background: #282c34;
@@ -35,8 +43,30 @@
 	float: left;
 }
 
+button[type="button"] {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
 .botao-direita {
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 11px 1em;
+	text-decoration: none;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
 	float: right;
+}
+
+.botao-direita:hover {
+	background: #111;
+	cursor: pointer;
 }
 
 /* Barra lateral com os marcadores listados */
@@ -216,7 +246,11 @@
 @media screen and (max-width: 435px) {
 
 	.nav a {
-		padding: 8px 0.5em;
+		padding: 11px 0.5em;
+	}
+
+	.botao-direita {
+		padding: 11px 0.5em;
 	}
 
 	.sidebar-toggle {
